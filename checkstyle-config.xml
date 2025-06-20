@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <!--
+        Basic checkstyle rules can be found here
+        https://maven.apache.org/shared/maven-shared-resources/maven_checks.html
+    -->
+
+    <!--  parent properties (this properties are inherited by modules and submodules  -->
+
+    <property name="charset" value="UTF-8"/>
+
+    <!-- caches information about files that have checked OK  -->
+    <property name="cacheFile" value="target/checkstyle_cache.txt"/>
+
+    <!--  the default severity level of all violations  -->
+    <property name="severity" value="error"/>
+
+    <!--  extensions of files that should be checked   -->
+    <property name="fileExtensions" value="java, sql, xml, yml"/>
+
+    <!--  file paths will be printed relative to this directory  -->
+    <!--    <property name="basedir" value="${basedir}"/>-->
+
+
+    <!--  Support @SuppressWarnings  -->
+    <!--  https://checkstyle.sourceforge.io/config_filters.html#SuppressWarningsFilter  -->
+    <module name="SuppressWarningsFilter"/>
+
+    <!--  Checks whether files end with a new line  -->
+    <!--  https://checkstyle.sourceforge.io/config_misc.html#NewlineAtEndOfFile  -->
+    <!--<module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf"/>
+    </module>-->
+
+    <!--  Checks for long source files-->
+    <!--  https://checkstyle.sourceforge.io/config_sizes.html#FileLength-->
+    <module name="FileLength">
+        <property name="max" value="1500"/>
+    </module>
+
+    <!--  Checks that there are no tab characters in the source code  -->
+    <!--  https://checkstyle.sourceforge.io/config_whitespace.html#FileTabCharacter  -->
+    <module name="FileTabCharacter"/>
+
+    <!--  https://checkstyle.sourceforge.io/config_sizes.html#LineLength  -->
+    <module name="LineLength">
+        <property name="max" value="130"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <!-- \s matches whitespace character, $ matches end of line. -->
+        <property name="format" value="\s+$"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
+    <!--  Checks that localization bundle .properties files contain the same keys  -->
+    <!--
+            <module name="Translation">
+                <property name="requiredTranslations" value="ru, en"/>
+            </module>
+    -->
+    <!--  Checks .properties files for a duplicated properties  -->
+    <!--        <module name="UniqueProperties"/>-->
+
+    <module name="TreeWalker">
+
+        <!-- required for SuppressWarningsFilter (and other Suppress* rules not used here) -->
+        <!-- see http://checkstyle.sourceforge.net/config_annotation.html#SuppressWarningsHolder -->
+        <module name="SuppressWarningsHolder"/>
+
+
+        <!-- Checks for blocks. You know, those {}'s         -->
+        <!-- See http://checkstyle.sf.net/config_blocks.html -->
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignored"/>
+        </module>
+        <!--  left curly brace should be at the end of the line  -->
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="RightCurly">
+            <property name="option" value="alone"/>
+            <property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, STATIC_INIT, INSTANCE_INIT"/>
+        </module>
+
+
+        <!--  Class design checks  -->
+        <!--  https://checkstyle.sourceforge.io/config_design.html  -->
+        <!--  Checks that a class which has only private constructors is declared as final  -->
+        <module name="FinalClass"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="InnerTypeLast"/>
+        <!--  Forbids interfaces without methods but having constants  -->
+        <module name="InterfaceIsType"/>
+        <module name="OneTopLevelClass"/>
+
+
+        <!--  Checks for common coding problems  -->
+        <!--  https://checkstyle.sourceforge.io/config_coding.html  -->
+        <!--  <module name="ArrayTrailingComma"/>  -->
+        <module name="DeclarationOrder"/>
+        <!--  Check that the default is after all the cases in a switch statement  -->
+        <module name="DefaultComesLast"/>
+        <!--  Check for single ;  -->
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="FallThrough"/>
+        <!--  Local variables must not have the same names as class fields  -->
+        <module name="HiddenField">
+            <property name="tokens" value="LAMBDA, VARIABLE_DEF"/>
+        </module>
+        <module name="IllegalInstantiation"/>
+        <!--  Forbid to throw unspecified exceptions like Throwable, RuntimeException, Error  -->
+        <module name="IllegalThrows"/>
+        <!--  Forbid statements like String s = Integer.toString(i = 2);  -->
+        <module name="InnerAssignment"/>
+        <module name="MagicNumber">
+            <property name="ignoreFieldDeclaration" value="true"/>
+            <property name="ignoreAnnotation" value="true"/>
+        </module>
+        <module name="MissingSwitchDefault"/>
+        <!--  Forbid the next code for (int i = 0; i < 1; i++) {i++; //violation}  -->
+        <module name="ModifiedControlVariable"/>
+        <!--
+                <module name="MultipleStringLiterals">
+                    <property name="allowedDuplicates" value="3"/>
+                </module>
+        -->
+        <!--  Forbid int a, b  -->
+        <module name="MultipleVariableDeclarations"/>
+        <module name="NestedForDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NestedTryDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NoClone"/>
+        <module name="NoFinalizer"/>
+        <module name="OneStatementPerLine"/>
+        <module name="OverloadMethodsDeclarationOrder"/>
+        <!--        <module name="ParameterAssignment"/>-->
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="UnnecessaryParentheses"/>
+        <module name="VariableDeclarationUsageDistance">
+            <property name="allowedDistance" value="10"/>
+            <property name="ignoreFinal" value="false"/>
+        </module>
+
+
+        <!--  Checks for imports  -->
+        <!--  https://checkstyle.sourceforge.io/config_imports.html  -->
+        <module name="AvoidStarImport"/>
+        <!--        <module name="AvoidStaticImport"/>-->
+        <!--        <module name="CustomImportOrder">-->
+        <module name="IllegalImport"> <!-- defaults to sun.* packages -->
+            <property name="illegalClasses"
+                      value="java.util.Date, java.sql.Connection, javax.transaction.Transactional"/>
+        </module>
+        <!--        <module name="ImportControl">-->
+        <module name="ImportOrder">
+            <property name="groups" value="*, com.m10"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="bottom"/>
+            <property name="staticGroups" value="*, com.m10"/>
+            <property name="separatedStaticGroups" value="true"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+            <property name="tokens" value="IMPORT, STATIC_IMPORT"/>
+        </module>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+
+
+        <!--  Complexity metrics  -->
+        <!--  https://checkstyle.sourceforge.io/config_metrics.html  -->
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="3"/>
+        </module>
+        <module name="ClassFanOutComplexity">
+            <property name="max" value="25"/>
+        </module>
+        <module name="CyclomaticComplexity">
+            <property name="max" value="7"/>
+            <property name="switchBlockAsSingleDecisionPoint" value="true"/>
+        </module>
+
+
+        <!--  Miscellaneous  -->
+        <!--  https://checkstyle.sourceforge.io/config_misc.html  -->
+        <module name="ArrayTypeStyle"/>
+        <module name="AvoidEscapedUnicodeCharacters">
+            <property name="allowNonPrintableEscapes" value="true"/>
+        </module>
+        <!--  Checks that long constants are defined with an upper ell. That is 'L' and not 'l'  -->
+        <module name="UpperEll"/>
+
+
+        <!-- Modifier Checks                                    -->
+        <!-- See http://checkstyle.sf.net/config_modifiers.html -->
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+
+
+        <!--  Checks for Naming Conventions in alphabetical order  -->
+        <!--  https://checkstyle.sourceforge.io/config_naming.html  -->
+        <!--        <module name="AbbreviationAsWordInName"/>-->
+        <!--        <module name="AbstractClassName"/>-->
+        <module name="CatchParameterName"/>
+        <module name="ClassTypeParameterName"/>
+        <module name="ConstantName">
+            <property name="format" value="^log(ger)?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+        <module name="InterfaceTypeParameterName"/>
+        <!--        <module name="LambdaParameterName"/>-->
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+        </module>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName"/>
+
+
+        <!--  Checks for different size violations e.g. file length, number of method parameters  -->
+        <!--  https://checkstyle.sourceforge.io/config_sizes.html  -->
+        <!--  Checks for long anonymous inner classes  -->
+        <!--  https://checkstyle.sourceforge.io/config_sizes.html#AnonInnerLength  -->
+        <module name="AnonInnerLength">
+            <property name="max" value="20"/>
+        </module>
+        <!--  Checks the number of method declared in each class (interface, enum, annotation)  -->
+        <!--  https://checkstyle.sourceforge.io/config_sizes.html#MethodCount  -->
+        <!--
+                <module name="MethodCount">
+                    <property name="maxPublic" value="10"/>
+                    <property name="maxTotal" value="40"/>
+                </module>
+        -->
+        <!--  Checks for long methods and constructors  -->
+        <!--  https://checkstyle.sourceforge.io/config_sizes.html#MethodLength-->
+        <module name="MethodLength">
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+            <property name="max" value="60"/>
+            <property name="countEmpty" value="true"/>
+        </module>
+        <!--  Checks the number of parameters of a method or constructor  -->
+        <!--  https://checkstyle.sourceforge.io/config_sizes.html#ParameterNumber  -->
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+            <property name="tokens" value="METHOD_DEF"/>
+        </module>
+
+
+        <!--  Checks for whitespace  -->
+        <!--  https://checkstyle.sourceforge.io/config_whitespace.html  -->
+        <module name="EmptyLineSeparator">
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
+        </module>
+        <!--  forbids the tab character in source code  -->
+        <module name="GenericWhitespace"/>
+        <module name="MethodParamPad"/>
+        <!--  forbids line breaks in imports  -->
+        <module name="NoLineWrap"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap"/>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+        <module name="WhitespaceAfter"/>
+<!--        <module name="WhitespaceAround"/>-->
+
+
+    </module>
+
+</module>
