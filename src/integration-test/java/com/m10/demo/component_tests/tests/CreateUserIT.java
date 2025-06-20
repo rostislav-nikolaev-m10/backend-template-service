@@ -5,10 +5,13 @@ import com.m10.demo.component_tests.extension.DefaultVaultTestContainerExtension
 import com.m10.demo.component_tests.helpers.InitComponentTest;
 import com.m10.demo.component_tests.helpers.VaultTestUtils;
 import com.m10.demo.dto.CreateUserProfileRequest;
+import com.m10.demo.service.UserProfileService;
 import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -26,6 +29,9 @@ public class CreateUserIT extends InitComponentTest {
     private String keyName;
 
     private VaultContainer<?> vaultContainer = DefaultVaultTestContainerExtension.getVaultContainer();
+
+    @Autowired
+    private UserProfileService userProfileService;
 
     @Nested
     class Success {
@@ -128,6 +134,33 @@ public class CreateUserIT extends InitComponentTest {
                     .andExpect(jsonPath("$.username").value(createUserProfileRequest.getUsername()))
                     .andExpect(jsonPath("$.firstName").value(createUserProfileRequest.getFirstName()))
                     .andExpect(jsonPath("$.lastName").value(createUserProfileRequest.getLastName()));
+        }
+
+        @SneakyThrows
+        @Test
+        @DisplayName("Можем найти профиль пользователя по имени")
+        void findUserByFirstName() {
+            // given
+            VaultTestUtils.createKey(keyName, vaultContainer);
+            CreateUserProfileRequest createUserProfileRequest =
+                    CreateUserProfileRequest.builder()
+                            .username(UUID.randomUUID().toString())
+                            .firstName("Ivan")
+                            .lastName("Ivanov")
+                            .build();
+            // when
+            mockMvc.perform(
+                    MockMvcRequestBuilders.post("/user-profiles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(toJson(createUserProfileRequest))
+                            .accept(MediaType.APPLICATION_JSON)
+            );
+            // then
+            var userProfiles = userProfileService.findUserProfilesByFirstName(createUserProfileRequest.getFirstName());
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(userProfiles).hasSize(1);
+                softly.assertThat(userProfiles.getFirst().username()).isEqualTo(createUserProfileRequest.getUsername());
+            });
         }
 
     }

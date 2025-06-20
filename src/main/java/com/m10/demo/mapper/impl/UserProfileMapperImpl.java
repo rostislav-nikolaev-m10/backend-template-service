@@ -5,6 +5,7 @@ import com.m10.demo.dto.GetUserProfileResponse;
 import com.m10.demo.entity.UserProfileEntity;
 import com.m10.demo.mapper.UserProfileMapper;
 import com.m10.demo.model.UserProfileModel;
+import com.m10.demo.service.HashingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class UserProfileMapperImpl implements UserProfileMapper {
     private String keyName;
 
     private final VaultTemplate vault;
+    private final HashingService hashingService;
 
     @Override
     public UserProfileModel createRequestToModel(CreateUserProfileRequest request) {
@@ -45,11 +47,14 @@ public class UserProfileMapperImpl implements UserProfileMapper {
                                 Plaintext.of(model.getLastName())
                         )
                 );
+
         return UserProfileEntity.builder()
                 .id(model.getId())
                 .username(model.getUsername())
                 .firstName(encryptionResults.get(0).get().getCiphertext())
+                .firstNameHash(hashingService.hash(model.getFirstName()))
                 .lastName(encryptionResults.get(1).get().getCiphertext())
+                .lastNameHash(hashingService.hash(model.getLastName()))
                 .build();
     }
 

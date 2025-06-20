@@ -15,7 +15,9 @@
                 id          uuid PRIMARY KEY     DEFAULT uuid_generate_v4(),
                 username    varchar     NOT NULL,
                 first_name  varchar,
+                first_name_hash varchar,
                 last_name   varchar,
+                last_name_hash varchar,
                 created_at  timestamptz NOT NULL DEFAULT now(),
                 updated_at  timestamptz NOT NULL DEFAULT now()
             );

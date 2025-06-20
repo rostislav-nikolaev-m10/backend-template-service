@@ -17,7 +17,9 @@ public class UserProfileEntity {
     private UUID id;
     private String username;
     private String firstName;
+    private String firstNameHash;
     private String lastName;
+    private String lastNameHash;
 
     public UserProfileEntity() {
     }
