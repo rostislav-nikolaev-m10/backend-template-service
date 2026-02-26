@@ -1,7 +1,7 @@
 package com.m10.demo.mapper;
 
-import com.m10.demo.dto.CreateUserProfileRequest;
-import com.m10.demo.dto.GetUserProfileResponse;
+import com.m10.demo.api.doc.dto.CreateUserProfileRequest;
+import com.m10.demo.api.doc.dto.GetUserProfileResponse;
 import com.m10.demo.entity.UserProfileEntity;
 import com.m10.demo.model.UserProfileModel;
 

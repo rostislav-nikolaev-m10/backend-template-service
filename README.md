@@ -1,31 +1,36 @@
-### Name
 
-### Description
+# Используемые библиотеки и решения
 
-### Capabilities/Business functionality:
+## Testcontainers
 
-### Service API:
+## LogBook ?
 
-### Service qualities:
+## Liquibase
 
-### Observability and monitoring information:
+---
 
-### Implementation:
+# Цели
 
-### Dependencies:
+- настройка всех тестовых компонент через testcontainers
+- быстрая сборка полного контекста для интеграционных тестов
+- переиспользование контекста между тестами без взаимного влияния + переиспользование контейнеров между запусками тестов для отладки
 
-### Runbooks:
+## Компоненты
 
-#### Code/Check style
-Import M10-code-style.xml to IntelliJ IDEA using Settings -> Editor -> Code Style -> Scheme (gear icon, Import Scheme menu item)
-Install Code Style plugin from
-https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
+- PostgreSQL
+  - создание снэпшота после инициализации Liquibase
+  - восстановление из снэпшота перед каждым тестом
+  - настройка пропертей для подключения
+- Kafka
+  - создание топиков перед запуском тестов с требуемой конфигурацией
+  - устранение влияния между тестами
+  - настройка пропертей для подключения
+- Redis
+- Wiremock
 
-Find the installed plugin using Setting -> Tools -> Checkstyle and import checkstyle-config.xml
-Mark imported rules file as active. Set Checkstyle version same as used in project (9.2.1 for now)
-
-### Contact information:
-
-### Onboarding guide:
-
-
+## Дополнительные требования
+- персистентные контейнеры благодаря withReuse(true) для отладки между запусками тестов
+- возможность запустить приложение локально с контейнерами тестовых компонентов
+- не пересоздавать контейнеры между тестами, но очищать состояние (БД, топики и т.д.)
+- избегать dirty context в Spring между тестами, по возможность использовать контейнеры в разных контекстах
+- работать с контейнерами через обёртки в виде Spring Bean-ов для вспомогательных операций (регистрация моков и др.)

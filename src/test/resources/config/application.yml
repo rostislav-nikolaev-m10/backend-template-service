@@ -1,0 +1,11 @@
+spring:
+  liquibase:
+    user: ${testcontainers.postgres.username}
+    password: ${testcontainers.postgres.password}
+    url: ${testcontainers.postgres.jdbc-url}
+    enabled: true
+  datasource:
+    driverClassName: ${testcontainers.postgres.driver-class-name}
+    url: ${testcontainers.postgres.jdbc-url}
+    username: ${testcontainers.postgres.username}
+    password: ${testcontainers.postgres.password}

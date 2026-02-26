@@ -1,9 +1,8 @@
 package com.m10.demo.model;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Builder
 @Data

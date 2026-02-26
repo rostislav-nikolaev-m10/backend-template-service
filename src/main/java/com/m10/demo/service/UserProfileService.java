@@ -1,10 +1,11 @@
 package com.m10.demo.service;
 
-import com.m10.demo.dto.CreateUserProfileRequest;
-import com.m10.demo.dto.GetUserProfileResponse;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.m10.demo.api.doc.dto.CreateUserProfileRequest;
+import com.m10.demo.api.doc.dto.GetUserProfileResponse;
 
 public interface UserProfileService {
 

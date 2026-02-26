@@ -22,14 +22,6 @@ management:
       exposure:
         include: "*"
 
-sentry:
-  # if SENTRY_DSN is not set means that sentry won't be used
-  dsn: ${SENTRY_DSN:}
-  # Set traces-sample-rate to 1.0 to capture 100% of transactions for performance monitoring.
-  # We recommend adjusting this value in production. (disable by default)
-  traces-sample-rate: ${SENTRY_RATE:0.0}
-  environment: ${SENTRY_ENVIRONMENT:develop}
-
 spring:
   application:
     name: demo-service
@@ -50,7 +42,7 @@ spring:
     password: ${PGPASSWORD:postgres}
     url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}${PGADDITIONALPARAMS:}
     enabled: true
-    change-log: classpath:/db/master.xml
+    change-log: classpath:/db/changelog/master.yml
     contexts: base
     default-schema: ${SPRING_LIQUIBASE_LIQUIBASESCHEMA:public}
   datasource:

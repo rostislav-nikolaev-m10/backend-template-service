@@ -1,11 +1,6 @@
-FROM amazoncorretto:17.0.2-alpine
+FROM amazoncorretto:21.0.2-alpine
+RUN apk update --no-cache && apk add --no-cache libstdc++
 COPY ./app.jar ./
-COPY docker/resources/logback-json.xml ./
-
-ARG DD_GIT_REPOSITORY_URL
-ARG DD_GIT_COMMIT_SHA
-ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
-ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 
 EXPOSE 8080
-ENTRYPOINT ["java","-Dlogging.config=/logback-json.xml","-jar","/app.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=datadog","-jar","/app.jar"]

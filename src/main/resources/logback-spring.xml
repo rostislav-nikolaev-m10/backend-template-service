@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProfile name="datadog">
+        <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook">
+            <delay>2000</delay>
+        </shutdownHook>
+        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <provider class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider"/>
+            </encoder>
+        </appender>
+
+        <logger name="com.m10" level="INFO"/>
+        <logger name="net.javacrumbs.shedlock" level="INFO"/>
+
+        <root level="INFO">
+            <appender-ref ref="consoleAppender"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="local | default">
+        <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook">
+            <delay>200</delay>
+        </shutdownHook>
+        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %X{traceId} - %msg%n</pattern>-->
+                <pattern>
+                    %yellow(%d{HH:mm:ss:SSS}) %green([%t]) %highlight(%-5level) %magenta(%logger{15}.%M) %X{operationId} %msg %n
+                </pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+        <logger name="com.m10" level="INFO"/>
+        <logger name="net.javacrumbs.shedlock" level="INFO"/>
+        <root level="INFO">
+            <appender-ref ref="consoleAppender"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <!-- encoders are assigned the type
+                 ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+            <encoder>
+                <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %X{operationId} %msg%n</pattern>
+            </encoder>
+        </appender>
+        <!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+        <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+        <!--    </appender>-->
+
+        <logger name="com.m10" level="DEBUG"/>
+        <logger name="net.javacrumbs.shedlock" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.internal.util.EntityPrinter" level="DEBUG"/>
+        <logger name="org.springframework.context.support" level="WARN"/>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+</configuration>
