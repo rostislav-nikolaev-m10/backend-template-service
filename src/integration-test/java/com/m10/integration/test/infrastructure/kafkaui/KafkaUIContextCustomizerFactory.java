@@ -84,7 +84,7 @@ public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory
         @Override
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
             if (!(registry instanceof ConfigurableListableBeanFactory beanFactory)) {
-                throw new IllegalStateException("Kafka Container Auto-configuration требует ConfigurableListableBeanFactory");
+                throw new IllegalStateException("Kafka Container Auto-configuration requires ConfigurableListableBeanFactory");
             }
             var containerManager = beanFactory.getBean(KafkaUIContainerManager.BEAN_NAME, KafkaUIContainerManager.class);
             containerManager.getContainer();

@@ -16,7 +16,7 @@ public final class BeanDefinitionRegistryHelper {
         if (context instanceof AbstractApplicationContext) {
             return (BeanDefinitionRegistry) ((AbstractApplicationContext) context).getBeanFactory();
         }
-        throw new IllegalStateException("Не удалось найти BeanDefinitionRegistry");
+        throw new IllegalStateException("BeanDefinitionRegistry not found");
     }
 
 }
