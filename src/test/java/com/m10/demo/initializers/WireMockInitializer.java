@@ -3,9 +3,9 @@ package com.m10.demo.initializers;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.m10.intergration.test.support.Images;
-import com.m10.intergration.test.infrastructure.wiremock.WireMockContainerDefinition;
-import com.m10.intergration.test.infrastructure.wiremock.WireMockContextCustomizerFactory;
+import com.m10.integration.test.support.Images;
+import com.m10.integration.test.infrastructure.wiremock.WireMockContainerDefinition;
+import com.m10.integration.test.infrastructure.wiremock.WireMockContextCustomizerFactory;
 
 
 public class WireMockInitializer extends WireMockContextCustomizerFactory

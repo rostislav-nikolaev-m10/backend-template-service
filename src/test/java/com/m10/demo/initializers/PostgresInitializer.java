@@ -3,9 +3,9 @@ package com.m10.demo.initializers;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.m10.intergration.test.support.Images;
-import com.m10.intergration.test.infrastructure.postgres.PostgresContainerDefinition;
-import com.m10.intergration.test.infrastructure.postgres.PostgresContextCustomizerFactory;
+import com.m10.integration.test.support.Images;
+import com.m10.integration.test.infrastructure.postgres.PostgresContainerDefinition;
+import com.m10.integration.test.infrastructure.postgres.PostgresContextCustomizerFactory;
 
 
 public class PostgresInitializer extends PostgresContextCustomizerFactory

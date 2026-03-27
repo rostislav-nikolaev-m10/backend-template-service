@@ -3,9 +3,9 @@ package com.m10.demo.initializers;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.m10.intergration.test.infrastructure.redis.RedisContainerDefinition;
-import com.m10.intergration.test.infrastructure.redis.RedisContextCustomizerFactory;
-import com.m10.intergration.test.support.Images;
+import com.m10.integration.test.infrastructure.redis.RedisContainerDefinition;
+import com.m10.integration.test.infrastructure.redis.RedisContextCustomizerFactory;
+import com.m10.integration.test.support.Images;
 
 public class RedisInitializer extends RedisContextCustomizerFactory
     implements ApplicationContextInitializer<ConfigurableApplicationContext> {
