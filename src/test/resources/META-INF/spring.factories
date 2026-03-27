@@ -2,8 +2,10 @@ org.springframework.test.context.ContextCustomizerFactory=\
     com.m10.business.integration.test.infrastructure.wiremock.WireMockContextCustomizerFactory,\
     com.m10.business.integration.test.infrastructure.postgres.PostgresContextCustomizerFactory,\
     com.m10.business.integration.test.infrastructure.vault.VaultContextCustomizerFactory,\
-    com.m10.business.integration.test.infrastructure.kafka.KafkaContextCustomizerFactory
+    com.m10.business.integration.test.infrastructure.kafka.KafkaContextCustomizerFactory,\
+    com.m10.business.integration.test.infrastructure.kafkaui.KafkaUIContextCustomizerFactory
 org.springframework.test.context.TestExecutionListener=\
     com.m10.business.integration.test.infrastructure.wiremock.WireMockTestExecutionListener,\
     com.m10.business.integration.test.infrastructure.postgres.PostgresTestExecutionListener,\
-    com.m10.business.integration.test.infrastructure.kafka.KafkaTestExecutionListener
+    com.m10.business.integration.test.infrastructure.kafka.KafkaTestExecutionListener,\
+    com.m10.business.integration.test.infrastructure.redis.RedistTestExecutionListener

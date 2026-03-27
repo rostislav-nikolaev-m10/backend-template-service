@@ -6,6 +6,7 @@ import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import java.util.concurrent.atomic.AtomicReference;
+import org.testcontainers.utility.DockerImageName;
 
 import com.m10.intergration.test.infrastructure.Docker;
 
@@ -45,7 +46,7 @@ public class RedisContainerManager {
     }
 
     private RedisContainer createContainer(String imageName) {
-        return new RedisContainer(imageName)
+        return new RedisContainer(DockerImageName.parse(imageName))
             .withLabel("com.testcontainers.desktop.service", "component-tests-redis")
             .withNetwork(Docker.network)
             .withExposedPorts(REDIS_PORT)
