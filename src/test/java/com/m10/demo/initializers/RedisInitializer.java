@@ -8,8 +8,7 @@ import com.m10.integration.test.infrastructure.redis.RedisContextCustomizerFacto
 import com.m10.integration.test.support.Images;
 
 
-public class RedisInitializer extends RedisContextCustomizerFactory
-    implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class RedisInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {

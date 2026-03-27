@@ -8,8 +8,7 @@ import com.m10.integration.test.infrastructure.kafka.KafkaContextCustomizerFacto
 import com.m10.integration.test.support.Images;
 
 
-public class KafkaInitializer extends KafkaContextCustomizerFactory
-    implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class KafkaInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {

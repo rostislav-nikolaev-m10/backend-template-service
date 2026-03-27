@@ -8,8 +8,7 @@ import com.m10.integration.test.infrastructure.vault.VaultContextCustomizerFacto
 import com.m10.integration.test.support.Images;
 
 
-public class VaultInitializer extends VaultContextCustomizerFactory
-    implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class VaultInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {

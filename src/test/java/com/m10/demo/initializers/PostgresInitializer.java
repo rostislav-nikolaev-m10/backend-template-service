@@ -8,8 +8,7 @@ import com.m10.integration.test.infrastructure.postgres.PostgresContextCustomize
 import com.m10.integration.test.support.Images;
 
 
-public class PostgresInitializer extends PostgresContextCustomizerFactory
-    implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class PostgresInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {

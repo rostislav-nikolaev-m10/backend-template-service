@@ -8,8 +8,7 @@ import com.m10.integration.test.infrastructure.wiremock.WireMockContextCustomize
 import com.m10.integration.test.support.Images;
 
 
-public class WireMockInitializer extends WireMockContextCustomizerFactory
-    implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class WireMockInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {
