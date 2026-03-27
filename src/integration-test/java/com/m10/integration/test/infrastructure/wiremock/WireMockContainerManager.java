@@ -37,7 +37,7 @@ public class WireMockContainerManager {
      */
     public static final int WIREMOCK_PORT = 8080;
 
-    private GenericContainer<?> container = null;
+    private GenericContainer<?> container;
     private final WireMockContainerDefinition wireMockContainerDefinition;
 
     private WireMock wireMockClient;
@@ -64,10 +64,9 @@ public class WireMockContainerManager {
         if (container != null) {
             return container;
         }
-        GenericContainer<?> newContainer = createContainer(wireMockContainerDefinition.containerName());
-        newContainer.start();
-        wireMockClient = new WireMock(newContainer.getHost(), newContainer.getMappedPort(WIREMOCK_PORT));
-        container = newContainer;
+        container = createContainer(wireMockContainerDefinition.containerName());
+        container.start();
+        wireMockClient = new WireMock(container.getHost(), container.getMappedPort(WIREMOCK_PORT));
         return container;
     }
 

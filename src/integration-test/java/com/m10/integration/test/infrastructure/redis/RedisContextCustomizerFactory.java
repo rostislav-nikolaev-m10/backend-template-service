@@ -33,6 +33,13 @@ public class RedisContextCustomizerFactory implements ContextCustomizerFactory {
         }
     }
 
+    public static void customizeContextForDefinition(
+        ConfigurableApplicationContext ctx,
+        RedisContainerDefinition def
+    ) {
+        new RedisContextCustomizer(def).customizeContext(ctx);
+    }
+
     protected static class RedisContextCustomizer implements ContextCustomizer {
 
         private final RedisContainerDefinition containerDefinition;
@@ -55,6 +62,8 @@ public class RedisContextCustomizerFactory implements ContextCustomizerFactory {
             registry.registerBeanDefinition(RedisContainerRegistrar.BEAN_NAME, registrarDefinition);
 
             var containerFactoryDefinition = new RootBeanDefinition(RedisContainerManager.class);
+            containerFactoryDefinition.getConstructorArgumentValues()
+                .addIndexedArgumentValue(0, containerDefinition);
             registry.registerBeanDefinition(RedisContainerManager.BEAN_NAME, containerFactoryDefinition);
         }
 

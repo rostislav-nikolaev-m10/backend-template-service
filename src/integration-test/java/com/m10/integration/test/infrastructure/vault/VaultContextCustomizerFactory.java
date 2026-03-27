@@ -33,6 +33,13 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
         }
     }
 
+    public static void customizeContextForDefinition(
+        ConfigurableApplicationContext ctx,
+        VaultContainerDefinition def
+    ) {
+        new VaultContextCustomizer(def).customizeContext(ctx);
+    }
+
     protected static class VaultContextCustomizer implements ContextCustomizer {
 
         private final VaultContainerDefinition containerDefinition;
@@ -55,6 +62,8 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
             registry.registerBeanDefinition(VaultContainerRegistrar.BEAN_NAME, registrarDefinition);
 
             var containerFactoryDefinition = new RootBeanDefinition(VaultContainerManager.class);
+            containerFactoryDefinition.getConstructorArgumentValues()
+                .addIndexedArgumentValue(0, containerDefinition);
             registry.registerBeanDefinition(VaultContainerManager.BEAN_NAME, containerFactoryDefinition);
         }
 

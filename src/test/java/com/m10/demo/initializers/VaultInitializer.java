@@ -3,9 +3,9 @@ package com.m10.demo.initializers;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.m10.integration.test.support.Images;
 import com.m10.integration.test.infrastructure.vault.VaultContainerDefinition;
 import com.m10.integration.test.infrastructure.vault.VaultContextCustomizerFactory;
+import com.m10.integration.test.support.Images;
 
 
 public class VaultInitializer extends VaultContextCustomizerFactory
@@ -14,8 +14,7 @@ public class VaultInitializer extends VaultContextCustomizerFactory
     @Override
     public void initialize(ConfigurableApplicationContext context) {
         var containerDefinition = new VaultContainerDefinition(Images.VAULT_IMAGE);
-        new VaultContextCustomizerFactory.VaultContextCustomizer(containerDefinition)
-            .customizeContext(context);
+        VaultContextCustomizerFactory.customizeContextForDefinition(context, containerDefinition);
     }
 
 }

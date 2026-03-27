@@ -64,6 +64,13 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
         }
     }
 
+    public static void customizeContextForDefinition(
+        ConfigurableApplicationContext ctx,
+        WireMockContainerDefinition def
+    ) {
+        new WireMockContextCustomizer(def).customizeContext(ctx);
+    }
+
     /**
      * Кастомизатор контекста для настройки WireMock контейнера.
      *

@@ -16,15 +16,21 @@ public class PostgresContainerManager {
 
     public static final String BEAN_NAME = PostgresContainerManager.class.getName();
 
+    private final PostgresContainerDefinition containerDefinition;
+
     private PostgreSQLContainer<?> container;
 
     private boolean snapshotCreated = false;
 
-    synchronized public PostgreSQLContainer<?> getContainer(String imageName) {
+    public PostgresContainerManager(PostgresContainerDefinition containerDefinition) {
+        this.containerDefinition = containerDefinition;
+    }
+
+    synchronized public PostgreSQLContainer<?> getContainer() {
         if (container != null) {
             return container;
         }
-        container = createContainer(imageName);
+        container = createContainer(containerDefinition.containerName());
         container.start();
         return container;
     }

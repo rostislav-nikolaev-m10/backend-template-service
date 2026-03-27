@@ -1,16 +1,13 @@
 package com.m10.integration.test.infrastructure.kafkaui;
 
 import java.time.Duration;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 import com.m10.integration.test.infrastructure.Docker;
 
-@Slf4j
-@RequiredArgsConstructor
+
 public class KafkaUIContainerManager {
 
     public static final String BEAN_NAME = KafkaUIContainerManager.class.getName();
@@ -18,6 +15,10 @@ public class KafkaUIContainerManager {
     private final KafkaUIContainerDefinition containerDefinition;
 
     private GenericContainer<?> container;
+
+    public KafkaUIContainerManager(KafkaUIContainerDefinition containerDefinition) {
+        this.containerDefinition = containerDefinition;
+    }
 
     synchronized public GenericContainer<?> getContainer() {
         if (container != null) {

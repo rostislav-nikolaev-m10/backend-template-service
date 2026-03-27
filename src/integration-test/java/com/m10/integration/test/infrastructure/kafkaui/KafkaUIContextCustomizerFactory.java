@@ -31,6 +31,13 @@ public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory
         }
     }
 
+    public static void customizeContextForDefinition(
+        ConfigurableApplicationContext ctx,
+        KafkaUIContainerDefinition def
+    ) {
+        new KafkaUIContextCustomizer(def).customizeContext(ctx);
+    }
+
     protected static class KafkaUIContextCustomizer implements ContextCustomizer {
 
         private final KafkaUIContainerDefinition containerDefinition;

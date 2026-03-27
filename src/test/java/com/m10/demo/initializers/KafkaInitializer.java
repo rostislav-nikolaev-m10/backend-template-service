@@ -7,14 +7,14 @@ import com.m10.integration.test.infrastructure.kafka.KafkaContainerDefinition;
 import com.m10.integration.test.infrastructure.kafka.KafkaContextCustomizerFactory;
 import com.m10.integration.test.support.Images;
 
+
 public class KafkaInitializer extends KafkaContextCustomizerFactory
     implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext context) {
         var containerDefinition = new KafkaContainerDefinition(Images.KAFKA_IMAGE, new String[]{});
-        new KafkaContextCustomizerFactory.KafkaContextCustomizer(containerDefinition)
-            .customizeContext(context);
+        KafkaContextCustomizerFactory.customizeContextForDefinition(context, containerDefinition);
     }
 
 }

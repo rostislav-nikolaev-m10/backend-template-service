@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -25,8 +24,8 @@ import org.testcontainers.utility.DockerImageName;
 
 import com.m10.integration.test.infrastructure.Docker;
 
+
 @Slf4j
-@RequiredArgsConstructor
 public class KafkaContainerManager {
 
     public static final String BEAN_NAME = KafkaContainerManager.class.getName();
@@ -35,6 +34,10 @@ public class KafkaContainerManager {
 
     private KafkaContainer container;
     private boolean topicsCreated = false;
+
+    public KafkaContainerManager(KafkaContainerDefinition containerDefinition) {
+        this.containerDefinition = containerDefinition;
+    }
 
     synchronized public KafkaContainer getContainer() {
         if (container != null) {
@@ -60,10 +63,9 @@ public class KafkaContainerManager {
                 .map(name -> new NewTopic(name, 1, (short) 1))
                 .toList();
             admin.createTopics(topics).all().get();
+            topicsCreated = true;
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Failed to create Kafka topics", e);
-        } finally {
-            topicsCreated = true;
         }
     }
 

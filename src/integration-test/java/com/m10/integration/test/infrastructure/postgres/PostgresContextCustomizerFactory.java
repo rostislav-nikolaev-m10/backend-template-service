@@ -36,6 +36,13 @@ public class PostgresContextCustomizerFactory implements ContextCustomizerFactor
         }
     }
 
+    public static void customizeContextForDefinition(
+        ConfigurableApplicationContext ctx,
+        PostgresContainerDefinition def
+    ) {
+        new PostgresContextCustomizer(def).customizeContext(ctx);
+    }
+
     protected static class PostgresContextCustomizer implements ContextCustomizer {
 
         private final PostgresContainerDefinition containerDefinition;
@@ -58,6 +65,8 @@ public class PostgresContextCustomizerFactory implements ContextCustomizerFactor
             registry.registerBeanDefinition(PostgresContainerRegistrar.BEAN_NAME, registrarDefinition);
 
             var containerFactoryDefinition = new RootBeanDefinition(PostgresContainerManager.class);
+            containerFactoryDefinition.getConstructorArgumentValues()
+                .addIndexedArgumentValue(0, containerDefinition);
             registry.registerBeanDefinition(PostgresContainerManager.BEAN_NAME, containerFactoryDefinition);
         }
 
@@ -91,7 +100,7 @@ public class PostgresContextCustomizerFactory implements ContextCustomizerFactor
                 throw new IllegalStateException("PostgreSQL Container Auto-configuration requires ConfigurableListableBeanFactory");
             }
             var containerManager = beanFactory.getBean(PostgresContainerManager.BEAN_NAME, PostgresContainerManager.class);
-            var container = containerManager.getContainer(containerDefinition.containerName());
+            var container = containerManager.getContainer();
             ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
             MapPropertySource propertySource = new MapPropertySource(
                 "postgresContainerProperties",
