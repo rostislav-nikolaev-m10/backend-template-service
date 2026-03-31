@@ -1,4 +1,4 @@
-package com.m10.demo.integration_tests.helpers;
+package com.m10.integration.test.infrastructure.vault;
 
 import java.util.List;
 

@@ -179,12 +179,6 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.zonky.test</groupId>
-            <artifactId>embedded-database-spring-test</artifactId>
-            <version>2.6.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

@@ -53,9 +53,8 @@ public class PostgresContainerManager {
                     "pg_dump",
                     "-U",
                     container.getUsername(),
-                    "--inserts",
-                    "--clean",
-                    "--file=test_dump.sql",
+                    "-Fc",
+                    "--file=test_dump.pgdump",
                     container.getDatabaseName()
                 )
                 .exec();
@@ -84,7 +83,7 @@ public class PostgresContainerManager {
             var response = dockerClient.execCreateCmd(container.getContainerId())
                 .withAttachStdout(true)
                 .withEnv(List.of("PGPASSWORD=\"" + container.getPassword() + "\""))
-                .withCmd("psql", "--file=test_dump.sql", container.getDatabaseName(), container.getUsername())
+                .withCmd("psql", "--file=test_dump.pgdump", container.getDatabaseName(), container.getUsername())
                 .exec();
             var stdoutConsumer = new ToStringConsumer();
             var stderrConsumer = new ToStringConsumer();

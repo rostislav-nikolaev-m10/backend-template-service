@@ -18,13 +18,12 @@ public class RedisContainerManager {
     private final RedisContainerDefinition containerDefinition;
 
     private RedisContainer container;
-    private RedisClient redisClient;
 
     public RedisContainerManager(RedisContainerDefinition containerDefinition) {
         this.containerDefinition = containerDefinition;
     }
 
-    synchronized public RedisContainer getContainer(String imageName) {
+    synchronized public RedisContainer getContainer() {
         if (container != null) {
             return container;
         }

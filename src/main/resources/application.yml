@@ -85,6 +85,7 @@ logbook:
 vault:
   encryption:
     key-name: ${VAULT_ENCRYPTION_KEY_NAME:default-key}
+  engine-path: ${VAULT_ENGINE_PATH:transit}
 
 logging:
   level:

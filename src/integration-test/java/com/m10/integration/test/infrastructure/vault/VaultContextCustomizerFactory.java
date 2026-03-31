@@ -57,8 +57,6 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
             var registry = getBeanDefinitionRegistry(context);
 
             var registrarDefinition = new RootBeanDefinition(VaultContainerRegistrar.class);
-            registrarDefinition.getConstructorArgumentValues()
-                .addIndexedArgumentValue(0, containerDefinition);
             registry.registerBeanDefinition(VaultContainerRegistrar.BEAN_NAME, registrarDefinition);
 
             var containerFactoryDefinition = new RootBeanDefinition(VaultContainerManager.class);
@@ -85,11 +83,7 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
 
         protected static final String BEAN_NAME = VaultContainerRegistrar.class.getName();
 
-        private final VaultContainerDefinition containerDefinition;
-
-        public VaultContainerRegistrar(VaultContainerDefinition containerDefinition) {
-            this.containerDefinition = containerDefinition;
-        }
+        public VaultContainerRegistrar() {}
 
         @Override
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -97,7 +91,8 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
                 throw new IllegalStateException("Vault Container Auto-configuration requires ConfigurableListableBeanFactory");
             }
             var containerManager = beanFactory.getBean(VaultContainerManager.BEAN_NAME, VaultContainerManager.class);
-            var container = containerManager.getContainer(containerDefinition.containerName());
+            var container = containerManager.getContainer();
+            containerManager.addVaultPolicy();
             ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
             MapPropertySource propertySource = new MapPropertySource(
                 "vaultContainerProperties",

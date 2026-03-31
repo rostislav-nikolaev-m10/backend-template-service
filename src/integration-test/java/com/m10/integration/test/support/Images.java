@@ -11,5 +11,6 @@ public final class Images {
     public static final String KAFKA_IMAGE = "apache/kafka:4.0.0";
     public static final String KAFKA_UI_IMAGE = "kafbat/kafka-ui:7073c72";
     public static final String REDIS_IMAGE = "redis:6.2.14";
+    public static final String REDIS_UI_IMAGE = "redis/redisinsight:2.70";
 
 }

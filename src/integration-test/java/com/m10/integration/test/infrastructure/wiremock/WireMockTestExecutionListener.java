@@ -39,8 +39,6 @@ public class WireMockTestExecutionListener extends AbstractTestExecutionListener
     public void beforeTestMethod(TestContext testContext) {
         testContext.getApplicationContext().getBeanProvider(WireMockContainerManager.class)
             .ifAvailable(WireMockContainerManager::resetMappings);
-        testContext.getApplicationContext().getBeanProvider(WireMockContainerManager.class)
-            .ifAvailable(WireMockContainerManager::resetMappings);
     }
 
 }

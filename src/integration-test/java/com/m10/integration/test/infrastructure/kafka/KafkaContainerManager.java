@@ -147,7 +147,6 @@ public class KafkaContainerManager {
     private KafkaContainer createContainer() {
         var container = new KafkaContainer(DockerImageName.parse(containerDefinition.containerName()))
             .withNetwork(Docker.network)
-            .withNetworkAliases(Docker.NETWORK_NAME)
             .withReuse(true);
         container.setNetworkAliases(List.of(Docker.NETWORK_NAME));
         return container;

@@ -3,7 +3,7 @@ package com.m10.integration.test.infrastructure.redis;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
-public class RedistTestExecutionListener extends AbstractTestExecutionListener {
+public class RedisTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
     public void afterTestMethod(TestContext testContext) {

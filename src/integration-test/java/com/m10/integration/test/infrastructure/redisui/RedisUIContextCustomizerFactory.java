@@ -1,4 +1,4 @@
-package com.m10.integration.test.infrastructure.kafkaui;
+package com.m10.integration.test.infrastructure.redisui;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,20 +15,21 @@ import org.springframework.test.context.ContextCustomizerFactory;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.TestContextAnnotationUtils;
 
-import com.m10.integration.test.infrastructure.kafka.KafkaContainerManager;
+import com.m10.integration.test.infrastructure.redis.RedisContainerManager;
 
 import static com.m10.integration.test.infrastructure.BeanDefinitionRegistryHelper.getBeanDefinitionRegistry;
 
-
-public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory {
+public class RedisUIContextCustomizerFactory implements ContextCustomizerFactory {
 
     @Override
-    public ContextCustomizer createContextCustomizer(Class<?> testClass, List<ContextConfigurationAttributes> configAttributes) {
-        var configureKafkaAnnotation =
-            TestContextAnnotationUtils.findMergedAnnotation(testClass, AutoConfigureKafkaUIContainer.class);
-        if (configureKafkaAnnotation != null) {
-            var containerDefinition = new KafkaUIContainerDefinition(configureKafkaAnnotation.containerName());
-            return new KafkaUIContextCustomizer(containerDefinition);
+    public ContextCustomizer createContextCustomizer(Class<?> testClass,
+                                                     List<ContextConfigurationAttributes> configAttributes) {
+        var configureRedisAnnotation = TestContextAnnotationUtils.findMergedAnnotation(testClass,
+            AutoConfigureRedisUIContainer.class);
+        if (configureRedisAnnotation != null) {
+            var containerDefinition = new RedisUIContainerDefinition(configureRedisAnnotation.instanceName(),
+                configureRedisAnnotation.containerName());
+            return new RedisUIContextCustomizer(containerDefinition);
         } else {
             return null;
         }
@@ -36,16 +37,15 @@ public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory
 
     public static void customizeContextForDefinition(
         ConfigurableApplicationContext ctx,
-        KafkaUIContainerDefinition def
-    ) {
-        new KafkaUIContextCustomizer(def).customizeContext(ctx);
+        RedisUIContainerDefinition def) {
+        new RedisUIContextCustomizer(def).customizeContext(ctx);
     }
 
-    protected static class KafkaUIContextCustomizer implements ContextCustomizer {
+    protected static class RedisUIContextCustomizer implements ContextCustomizer {
 
-        private final KafkaUIContainerDefinition containerDefinition;
+        private final RedisUIContainerDefinition containerDefinition;
 
-        public KafkaUIContextCustomizer(KafkaUIContainerDefinition containerDefinition) {
+        public RedisUIContextCustomizer(RedisUIContainerDefinition containerDefinition) {
             this.containerDefinition = containerDefinition;
         }
 
@@ -57,15 +57,15 @@ public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory
         public void customizeContext(ConfigurableApplicationContext context) {
             var registry = getBeanDefinitionRegistry(context);
 
-            var registrarDefinition = new RootBeanDefinition(KafkaUIContainerRegistrar.class);
-            registry.registerBeanDefinition(KafkaUIContainerRegistrar.BEAN_NAME, registrarDefinition);
+            var registrarDefinition = new RootBeanDefinition(RedisUIContainerRegistrar.class);
+            registry.registerBeanDefinition(RedisUIContainerRegistrar.BEAN_NAME, registrarDefinition);
 
-            var containerFactoryDefinition = new RootBeanDefinition(KafkaUIContainerManager.class);
+            var containerFactoryDefinition = new RootBeanDefinition(RedisUIContainerManager.class);
             containerFactoryDefinition.getConstructorArgumentValues()
                 .addIndexedArgumentValue(0, containerDefinition);
             containerFactoryDefinition.getConstructorArgumentValues()
-                .addIndexedArgumentValue(1, new RuntimeBeanReference(KafkaContainerManager.BEAN_NAME));
-            registry.registerBeanDefinition(KafkaUIContainerManager.BEAN_NAME, containerFactoryDefinition);
+                .addIndexedArgumentValue(1, new RuntimeBeanReference(RedisContainerManager.BEAN_NAME));
+            registry.registerBeanDefinition(RedisUIContainerManager.BEAN_NAME, containerFactoryDefinition);
         }
 
         @Override
@@ -75,23 +75,29 @@ public class KafkaUIContextCustomizerFactory implements ContextCustomizerFactory
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            KafkaUIContextCustomizer that = (KafkaUIContextCustomizer) o;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            RedisUIContextCustomizer that = (RedisUIContextCustomizer) o;
             return Objects.equals(containerDefinition, that.containerDefinition);
         }
 
     }
 
-    protected static class KafkaUIContainerRegistrar implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
+    protected static class RedisUIContainerRegistrar implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
 
-        protected static final String BEAN_NAME = KafkaUIContainerRegistrar.class.getName();
+        protected static final String BEAN_NAME = RedisUIContainerRegistrar.class.getName();
+
+        public RedisUIContainerRegistrar() {
+        }
 
         @Override
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
             if (!(registry instanceof ConfigurableListableBeanFactory beanFactory)) {
-                throw new IllegalStateException("Kafka Container Auto-configuration requires ConfigurableListableBeanFactory");
+                throw new IllegalStateException(
+                    "RedisUI Container Auto-configuration requires ConfigurableListableBeanFactory");
             }
-            var containerManager = beanFactory.getBean(KafkaUIContainerManager.BEAN_NAME, KafkaUIContainerManager.class);
+            var containerManager = beanFactory.getBean(RedisUIContainerManager.BEAN_NAME,
+                RedisUIContainerManager.class);
             containerManager.getContainer();
         }
 

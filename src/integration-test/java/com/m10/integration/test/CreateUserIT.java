@@ -1,26 +1,60 @@
 package com.m10.integration.test;
 
+import com.jayway.jsonpath.JsonPath;
+import java.util.UUID;
+import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.m10.demo.api.doc.dto.CreateUserProfileRequest;
+import com.m10.demo.service.UserProfileService;
+import com.m10.integration.test.infrastructure.vault.VaultContainerManager;
 import com.m10.integration.test.support.CommonIT;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 public class CreateUserIT extends CommonIT {
 
-//    @Autowired
-//    private UserProfileService userProfileService;
+    private static String TEST_KEY = "test-key";
+
+    @Autowired
+    private UserProfileService userProfileService;
+    @Autowired
+    private VaultContainerManager vaultContainerManager;
 
     @Nested
     class Success {
+
+        @Test
+        void test() {
+            vaultContainerManager.createKey(TEST_KEY);
+            CreateUserProfileRequest createUserProfileRequest =
+                CreateUserProfileRequest.builder()
+                    .username(UUID.randomUUID().toString())
+                    .firstName("Ivan")
+                    .lastName("Ivanov")
+                    .build();
+            var response = userProfileService.createUserProfile(createUserProfileRequest);
+            vaultContainerManager.rotateKey(TEST_KEY);
+            var secondResponse = userProfileService.getUserProfileById(response.id().toString()).get();
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(response).isNotNull();
+                softly.assertThat(secondResponse).isNotNull();
+            });
+        }
 
 //        @SneakyThrows
 //        @Test
 //        @DisplayName("Успешное создание профиля пользователя")
 //        void saveNewUser() {
 //            // given
-//            VaultTestUtils.createKey(keyName, vaultContainer);
+//            vaultContainerManager.createKey(keyName, vaultContainer);
 //            CreateUserProfileRequest createUserProfileRequest =
 //                CreateUserProfileRequest.builder()
 //                    .username(UUID.randomUUID().toString())
@@ -43,7 +77,7 @@ public class CreateUserIT extends CommonIT {
 //                .andExpect(jsonPath("$.firstName").value(createUserProfileRequest.firstName()))
 //                .andExpect(jsonPath("$.lastName").value(createUserProfileRequest.lastName()));
 //        }
-//
+
 //        @SneakyThrows
 //        @Test
 //        @DisplayName("Можем прочитать профиль пользователя после создания")

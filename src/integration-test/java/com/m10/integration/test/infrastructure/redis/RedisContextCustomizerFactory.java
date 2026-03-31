@@ -57,8 +57,6 @@ public class RedisContextCustomizerFactory implements ContextCustomizerFactory {
             var registry = getBeanDefinitionRegistry(context);
 
             var registrarDefinition = new RootBeanDefinition(RedisContainerRegistrar.class);
-            registrarDefinition.getConstructorArgumentValues()
-                .addIndexedArgumentValue(0, containerDefinition);
             registry.registerBeanDefinition(RedisContainerRegistrar.BEAN_NAME, registrarDefinition);
 
             var containerFactoryDefinition = new RootBeanDefinition(RedisContainerManager.class);
@@ -85,11 +83,7 @@ public class RedisContextCustomizerFactory implements ContextCustomizerFactory {
 
         protected static final String BEAN_NAME = RedisContainerRegistrar.class.getName();
 
-        private final RedisContainerDefinition containerDefinition;
-
-        public RedisContainerRegistrar(RedisContainerDefinition containerDefinition) {
-            this.containerDefinition = containerDefinition;
-        }
+        public RedisContainerRegistrar() {}
 
         @Override
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -97,7 +91,7 @@ public class RedisContextCustomizerFactory implements ContextCustomizerFactory {
                 throw new IllegalStateException("Vault Container Auto-configuration requires ConfigurableListableBeanFactory");
             }
             var containerManager = beanFactory.getBean(RedisContainerManager.BEAN_NAME, RedisContainerManager.class);
-            var container = containerManager.getContainer(containerDefinition.containerName());
+            var container = containerManager.getContainer();
             ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
             MapPropertySource propertySource = new MapPropertySource(
                 "redisContainerProperties",

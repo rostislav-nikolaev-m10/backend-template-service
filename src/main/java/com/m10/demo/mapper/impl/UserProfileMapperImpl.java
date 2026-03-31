@@ -24,6 +24,8 @@ public class UserProfileMapperImpl implements UserProfileMapper {
 
     @Value("${vault.encryption.key-name}")
     private String keyName;
+    @Value("${vault.engine-path}")
+    private String enginePath;
 
     private final VaultTemplate vault;
     private final HashingService hashingService;
@@ -40,7 +42,7 @@ public class UserProfileMapperImpl implements UserProfileMapper {
     @Override
     public UserProfileEntity modelToEntity(UserProfileModel model) {
         List<VaultEncryptionResult> encryptionResults =
-            vault.opsForTransit().encrypt(
+            vault.opsForTransit(enginePath).encrypt(
                 keyName,
                 List.of(
                     Plaintext.of(model.getFirstName()),
@@ -61,7 +63,7 @@ public class UserProfileMapperImpl implements UserProfileMapper {
     @Override
     public UserProfileModel entityToModel(UserProfileEntity entity) {
         List<VaultDecryptionResult> decryptionResult =
-            vault.opsForTransit().decrypt(
+            vault.opsForTransit(enginePath).decrypt(
                 keyName,
                 List.of(
                     Ciphertext.of(entity.getFirstName()),

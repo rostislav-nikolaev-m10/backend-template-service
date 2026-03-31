@@ -9,3 +9,6 @@ spring:
     url: ${testcontainers.postgres.jdbc-url}
     username: ${testcontainers.postgres.username}
     password: ${testcontainers.postgres.password}
+vault:
+  encryption:
+    key-name: test-key
