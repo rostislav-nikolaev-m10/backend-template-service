@@ -14,12 +14,12 @@ import com.m10.integration.test.infrastructure.wiremock.AutoConfigureWireMockCon
 
 @SpringBootTest(classes = Application.class)
 @AutoConfigureKafkaContainer(containerName = Images.KAFKA_IMAGE)
-@AutoConfigureKafkaUIContainer(containerName = Images.KAFKA_UI_IMAGE)
 @AutoConfigurePostgresContainer(containerName = Images.POSTGRES_IMAGE)
 @AutoConfigureRedisContainer(containerName = Images.REDIS_IMAGE)
-@AutoConfigureRedisUIContainer(containerName = Images.REDIS_UI_IMAGE)
 @AutoConfigureVaultContainer(containerName = Images.VAULT_IMAGE)
 @AutoConfigureWireMockContainer(containerName = Images.WIREMOCK_IMAGE)
+@AutoConfigureKafkaUIContainer(containerName = Images.KAFKA_UI_IMAGE)
+@AutoConfigureRedisUIContainer(containerName = Images.REDIS_UI_IMAGE)
 public abstract class CommonIT {
 
 }
