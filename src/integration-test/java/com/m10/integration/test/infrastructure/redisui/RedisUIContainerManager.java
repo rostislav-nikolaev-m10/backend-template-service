@@ -56,7 +56,8 @@ public class RedisUIContainerManager {
                     .withStartupTimeout(Duration.ofSeconds(30))
             )
             .withLabel("com.testcontainers.desktop.service", "component-tests-redis-ui")
-            .withEnv("RI_REDIS_HOST", redisIp)
+//            .withEnv("RI_REDIS_HOST", redisIp)
+            .withEnv("RI_REDIS_HOST", "dev-cache-cluster-replication-group.9ykv65.ng.0001.euc1.cache.amazonaws.com")
             .withEnv("RI_REDIS_PORT", String.valueOf(6379))
             .withReuse(true);
         return redisUI;
