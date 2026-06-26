@@ -75,34 +75,37 @@ public class PostgresContainerManager {
      * не проверяет код возврата, а stderr раньше даже не был приаттачен.
      */
     private void execInContainer(String... cmd) {
-        var dockerClient = DockerClientFactory.instance().client();
-        try (var callback = new FrameConsumerResultCallback()) {
-            var execId = dockerClient.execCreateCmd(container.getContainerId())
-                .withAttachStdout(true)
-                .withAttachStderr(true)
-                .withEnv(List.of("PGPASSWORD=" + container.getPassword()))
-                .withCmd(cmd)
-                .exec()
-                .getId();
-            var stdout = new ToStringConsumer();
-            var stderr = new ToStringConsumer();
-            callback.addConsumer(OutputFrame.OutputType.STDOUT, stdout);
-            callback.addConsumer(OutputFrame.OutputType.STDERR, stderr);
-            dockerClient.execStartCmd(execId)
-                .exec(callback)
-                .awaitCompletion();
+        try (var dockerClient = DockerClientFactory.instance().client()) {
+            try (var callback = new FrameConsumerResultCallback()) {
+                var execId = dockerClient.execCreateCmd(container.getContainerId())
+                    .withAttachStdout(true)
+                    .withAttachStderr(true)
+                    .withEnv(List.of("PGPASSWORD=" + container.getPassword()))
+                    .withCmd(cmd)
+                    .exec()
+                    .getId();
+                var stdout = new ToStringConsumer();
+                var stderr = new ToStringConsumer();
+                callback.addConsumer(OutputFrame.OutputType.STDOUT, stdout);
+                callback.addConsumer(OutputFrame.OutputType.STDERR, stderr);
+                dockerClient.execStartCmd(execId)
+                    .exec(callback)
+                    .awaitCompletion();
 
-            Long exitCode = dockerClient.inspectExecCmd(execId).exec().getExitCodeLong();
-            if (exitCode == null || exitCode != 0) {
-                throw new IllegalStateException(
-                    cmd[0] + " failed in container (exit=" + exitCode + "):\n" + stderr.toUtf8String()
-                );
+                Long exitCode = dockerClient.inspectExecCmd(execId).exec().getExitCodeLong();
+                if (exitCode == null || exitCode != 0) {
+                    throw new IllegalStateException(
+                        cmd[0] + " failed in container (exit=" + exitCode + "):\n" + stderr.toUtf8String()
+                    );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(cmd[0] + " execution failed", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(cmd[0] + " execution was interrupted", e);
             }
         } catch (IOException e) {
-            throw new RuntimeException(cmd[0] + " execution failed", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(cmd[0] + " execution was interrupted", e);
+            throw new RuntimeException(e);
         }
     }
 
