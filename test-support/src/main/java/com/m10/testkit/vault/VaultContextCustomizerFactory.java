@@ -92,6 +92,7 @@ public class VaultContextCustomizerFactory implements ContextCustomizerFactory {
             }
             var containerManager = beanFactory.getBean(VaultContainerManager.BEAN_NAME, VaultContainerManager.class);
             var container = containerManager.getContainer();
+            containerManager.enableTransitEngine();
             containerManager.addVaultPolicy();
             ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
             MapPropertySource propertySource = new MapPropertySource(

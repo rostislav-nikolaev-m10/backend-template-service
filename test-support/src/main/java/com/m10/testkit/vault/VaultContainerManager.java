@@ -34,12 +34,47 @@ public class VaultContainerManager {
     }
 
     private VaultContainer<?> createContainer(String imageName) {
+        // NB: транзит-движок НЕ монтируем через withInitCommand — она неидемпотентна и
+        // при withReuse(true) повторно выполняется на переиспользованном контейнере,
+        // падая с "path is already in use". Монтируем идемпотентно через API: enableTransitEngine().
         return new VaultContainer<>(imageName)
             .withVaultToken("test")
-            .withInitCommand("secrets enable -path=transit/test-engine transit")
             .withLabel("com.testcontainers.desktop.service", "component-tests-vault")
             .withNetwork(Docker.network)
             .withReuse(true);
+    }
+
+    /**
+     * Идемпотентно монтирует transit-движок по пути transit/test-engine.
+     * Безопасно при переиспользовании контейнера: если движок уже смонтирован — ничего не делает.
+     */
+    public void enableTransitEngine() {
+        String baseUrl = "http://" + getContainer().getHost() + ":" + getContainer().getFirstMappedPort();
+        WebTestClient client =
+            WebTestClient.bindToServer()
+                .baseUrl(baseUrl)
+                .build();
+        boolean alreadyMounted = client.get()
+            .uri("/v1/sys/mounts/transit/test-engine/tune")
+            .header(VaultHttpHeaders.VAULT_TOKEN, VAULT_TOKEN)
+            .exchange()
+            .returnResult(Void.class)
+            .getStatus()
+            .is2xxSuccessful();
+        if (alreadyMounted) {
+            return;
+        }
+        client.post()
+            .uri("/v1/sys/mounts/transit/test-engine")
+            .header(VaultHttpHeaders.VAULT_TOKEN, VAULT_TOKEN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                    "type": "transit"
+                }
+                """)
+            .exchange()
+            .expectStatus().is2xxSuccessful();
     }
 
     public void flushVault() {
