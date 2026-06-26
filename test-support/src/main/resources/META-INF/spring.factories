@@ -1,0 +1,14 @@
+org.springframework.test.context.ContextCustomizerFactory=\
+    com.m10.testkit.wiremock.WireMockContextCustomizerFactory,\
+    com.m10.testkit.postgres.PostgresContextCustomizerFactory,\
+    com.m10.testkit.kafka.KafkaContextCustomizerFactory,\
+    com.m10.testkit.kafkaui.KafkaUIContextCustomizerFactory,\
+    com.m10.testkit.redis.RedisContextCustomizerFactory,\
+    com.m10.testkit.redisui.RedisUIContextCustomizerFactory,\
+    com.m10.testkit.vault.VaultContextCustomizerFactory
+org.springframework.test.context.TestExecutionListener=\
+    com.m10.testkit.wiremock.WireMockTestExecutionListener,\
+    com.m10.testkit.postgres.PostgresTestExecutionListener,\
+    com.m10.testkit.kafka.KafkaTestExecutionListener,\
+    com.m10.testkit.redis.RedisTestExecutionListener,\
+    com.m10.testkit.vault.VaultTestExecutionListener

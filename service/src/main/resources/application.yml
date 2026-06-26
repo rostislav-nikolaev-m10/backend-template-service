@@ -1,0 +1,95 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  forward-headers-strategy: framework
+
+management:
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: diskSpace, readinessState
+      show-details: "ALWAYS"
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  application:
+    name: demo-service
+  threads:
+    virtual:
+      enabled: false
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+    jpa:
+      repositories:
+        enabled: false
+  liquibase:
+    user: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}${PGADDITIONALPARAMS:}
+    enabled: true
+    change-log: classpath:/db/changelog/master.yml
+    contexts: base
+    default-schema: ${SPRING_LIQUIBASE_LIQUIBASESCHEMA:public}
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}${PGADDITIONALPARAMS:}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-timeout: 3000
+      validation-timeout: 1000
+      # Setting such low idle/maxLifeTime latencies due to low postgres tcp_keepalives_idle default value (300 seconds)
+      idle-timeout: ${HIKARI_POOL_IDLE_TIMEOUT:100000}
+      max-lifetime: ${HIKARI_POOL_MAX_LIFETIME:285000}
+      keepalive-time: ${HIKARI_POOL_KEEPALIVE_TIME:0}
+
+logbook:
+  predicate:
+    exclude:
+      - path: '/actuator/health/**'
+      - path: '/actuator/prometheus/**'
+      - path: '/*/index'
+      - path: '**.js'
+      - path: '**.css'
+      - path: '**.svg'
+      - path: '**.html'
+      - path: '/*/static/**'
+      - path: '/*/swagger-ui/**'
+      - path: '/*/v3/api-docs/**'
+  obfuscate:
+    headers:
+      - 'authorization'
+      - 'x-api-key'
+    json-body-fields:
+      - 'apiCredentialUuid'
+      - 'apiCredentialSecret'
+      - 'accessToken'
+
+vault:
+  encryption:
+    key-name: ${VAULT_ENCRYPTION_KEY_NAME:default-key}
+  engine-path: ${VAULT_ENGINE_PATH:transit}
+
+logging:
+  level:
+    org.zalando.logbook: trace
+
+hashing:
+  secret: secret

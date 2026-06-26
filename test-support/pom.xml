@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.m10</groupId>
+        <artifactId>backend-template-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.m10</groupId>
+    <artifactId>test-support</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>test-support</name>
+    <description>Reusable Testcontainers-based integration-test infrastructure (testkit)</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Версии, не управляемые spring-boot-dependencies -->
+        <testcontainers-redis.version>1.4.6</testcontainers-redis.version>
+        <wiremock.version>3.12.1</wiremock.version>
+        <spring-vault.version>3.2.0</spring-vault.version>
+    </properties>
+
+    <!--
+      Все зависимости — compile-scope (это main-исходники модуля).
+      У потребителя test-support подключается со scope=test, поэтому
+      транзитивно приходит в его тестовый classpath.
+    -->
+    <dependencies>
+        <!-- Spring TestContext (ContextCustomizer/TestExecutionListener), JUnit 5, AssertJ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <!-- WebTestClient + spring-web (HttpStatus/MediaType), reactor-netty -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- Kafka: KafkaListenerEndpointRegistry, ContainerTestUtils, AdminClient/kafka-clients -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+        </dependency>
+
+        <!-- Vault: VaultHttpHeaders -->
+        <dependency>
+            <groupId>org.springframework.vault</groupId>
+            <artifactId>spring-vault-core</artifactId>
+            <version>${spring-vault.version}</version>
+        </dependency>
+
+        <!-- Redis client, используемый менеджером контейнера напрямую (lettuce) -->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+        </dependency>
+
+        <!-- Testcontainers core: DockerClientFactory, GenericContainer, Network, output.*,
+             а также транзитивно junit:junit (org.junit.rules.ExternalResource) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>vault</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.redis.testcontainers</groupId>
+            <artifactId>testcontainers-redis-junit-jupiter</artifactId>
+            <version>${testcontainers-redis.version}</version>
+        </dependency>
+
+        <!-- WireMock standalone: com.github.tomakehurst.wiremock.client.WireMock -->
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+        </dependency>
+
+        <!-- @Slf4j и прочий lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>
