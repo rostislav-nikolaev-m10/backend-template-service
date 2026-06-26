@@ -42,32 +42,14 @@ public class PostgresContainerManager {
         if (container == null) {
             return false;
         }
-        try (
-            var callback = new FrameConsumerResultCallback()
-        ) {
-            var dockerClient = DockerClientFactory.instance().client();
-            var response = dockerClient.execCreateCmd(container.getContainerId())
-                .withAttachStdout(true)
-                .withEnv(List.of("PGPASSWORD=\"" + container.getPassword() + "\""))
-                .withCmd(
-                    "pg_dump",
-                    "-U",
-                    container.getUsername(),
-                    "-Fc",
-                    "--file=test_dump.pgdump",
-                    container.getDatabaseName()
-                )
-                .exec();
-            var stdoutConsumer = new ToStringConsumer();
-            var stderrConsumer = new ToStringConsumer();
-            callback.addConsumer(OutputFrame.OutputType.STDOUT, stdoutConsumer);
-            callback.addConsumer(OutputFrame.OutputType.STDERR, stderrConsumer);
-            dockerClient.execStartCmd(response.getId())
-                .exec(callback)
-                .awaitCompletion();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // -Fc — custom-формат, восстанавливается через pg_restore (см. restoreSnapshot)
+        execInContainer(
+            "pg_dump",
+            "-U", container.getUsername(),
+            "-Fc",
+            "--file=test_dump.pgdump",
+            container.getDatabaseName()
+        );
         snapshotCreated = true;
         return true;
     }
@@ -76,26 +58,52 @@ public class PostgresContainerManager {
         if (container == null || !snapshotCreated) {
             return false;
         }
-        try (
-            var callback = new FrameConsumerResultCallback()
-        ) {
-            var dockerClient = DockerClientFactory.instance().client();
-            var response = dockerClient.execCreateCmd(container.getContainerId())
+        // --clean --if-exists — снести объекты из дампа перед восстановлением (повторяемость между тестами)
+        execInContainer(
+            "pg_restore",
+            "--clean", "--if-exists",
+            "-U", container.getUsername(),
+            "-d", container.getDatabaseName(),
+            "test_dump.pgdump"
+        );
+        return true;
+    }
+
+    /**
+     * Выполняет команду в контейнере и падает с исключением, если её exit code != 0.
+     * Без этого ошибки pg_dump/pg_restore проходили незаметно: awaitCompletion()
+     * не проверяет код возврата, а stderr раньше даже не был приаттачен.
+     */
+    private void execInContainer(String... cmd) {
+        var dockerClient = DockerClientFactory.instance().client();
+        try (var callback = new FrameConsumerResultCallback()) {
+            var execId = dockerClient.execCreateCmd(container.getContainerId())
                 .withAttachStdout(true)
-                .withEnv(List.of("PGPASSWORD=\"" + container.getPassword() + "\""))
-                .withCmd("psql", "--file=test_dump.pgdump", container.getDatabaseName(), container.getUsername())
-                .exec();
-            var stdoutConsumer = new ToStringConsumer();
-            var stderrConsumer = new ToStringConsumer();
-            callback.addConsumer(OutputFrame.OutputType.STDOUT, stdoutConsumer);
-            callback.addConsumer(OutputFrame.OutputType.STDERR, stderrConsumer);
-            dockerClient.execStartCmd(response.getId())
+                .withAttachStderr(true)
+                .withEnv(List.of("PGPASSWORD=" + container.getPassword()))
+                .withCmd(cmd)
+                .exec()
+                .getId();
+            var stdout = new ToStringConsumer();
+            var stderr = new ToStringConsumer();
+            callback.addConsumer(OutputFrame.OutputType.STDOUT, stdout);
+            callback.addConsumer(OutputFrame.OutputType.STDERR, stderr);
+            dockerClient.execStartCmd(execId)
                 .exec(callback)
                 .awaitCompletion();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+
+            Long exitCode = dockerClient.inspectExecCmd(execId).exec().getExitCodeLong();
+            if (exitCode == null || exitCode != 0) {
+                throw new IllegalStateException(
+                    cmd[0] + " failed in container (exit=" + exitCode + "):\n" + stderr.toUtf8String()
+                );
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(cmd[0] + " execution failed", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(cmd[0] + " execution was interrupted", e);
         }
-        return true;
     }
 
     private PostgreSQLContainer<?> createContainer(String imageName) {
