@@ -8,6 +8,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import com.m10.testkit.core.Docker;
 import com.m10.testkit.redis.RedisContainerManager;
 
 
@@ -54,10 +55,11 @@ public class RedisUIContainerManager {
                     .forPort(REDIS_UI_PORT)
                     .withStartupTimeout(Duration.ofSeconds(30))
             )
+            .withNetwork(Docker.network)
             .withLabel("com.testcontainers.desktop.service", "component-tests-redis-ui")
 //            .withEnv("RI_REDIS_HOST", redisIp)
             .withEnv("RI_REDIS_HOST", "dev-cache-cluster-replication-group.9ykv65.ng.0001.euc1.cache.amazonaws.com")
-            .withEnv("RI_REDIS_PORT", String.valueOf(6379))
+            .withEnv("RI_REDIS_PORT", String.valueOf(RedisContainerManager.REDIS_PORT))
             .withReuse(true);
         return redisUI;
     }
